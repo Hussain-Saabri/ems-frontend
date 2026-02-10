@@ -3,27 +3,39 @@ import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-
+import { loginSchema } from '../schemas/authSchema';
+import { zodResolver } from '@hookform/resolvers/zod';
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
 
-    const { register, handleSubmit, formState: { errors } } = useForm({
-        mode: "onSubmit",
-        reValidateMode: "onChange",
+     const {
+        register,
+        handleSubmit,
+        formState: { errors,isSubmitting},
+    } = useForm({
+        resolver: zodResolver(loginSchema),
+        defaultValues: {
+            email: '',
+            password: '',
+        }
     });
     console.log("Login component rendered");
 
-    const onSubmit = (data) => {
+    const onSubmit =  async (data) => {
+        
+        console.log("Submit button clicked");
+        
         // Logic will be added when backend is ready
         console.log('Logging in with:', data);
+        
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center px-4">
-            <div className="w-full max-w-md border border-gray-300 bg-white rounded-2xl p-8 transition-all duration-300 ">
+        <div className="flex min-h-screen items-center justify-center px-5">
+            <div className="w-full max-w-md border border-gray-300 bg-white rounded-2xl p-8 transition-all duration-300 mt-[-50px]">
                 {/* Header */}
-                <div className="flex flex-col items-center mb-4">
-                    <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-blue-200">
+                <div className="flex flex-col items-center mb-1">
+                    <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-2 shadow-lg shadow-blue-200">
                         <span className="text-white font-bold text-xl">EMS</span>
                     </div>
                     <h1 className="text-2xl font-bold text-gray-900 mb-2">Login</h1>
@@ -73,7 +85,7 @@ const Login = () => {
                             <Input
                                 type={showPassword ? "text" : "password"}
                                 placeholder="Enter your password"
-                                className="pl-10  h-11"
+                                className="pl-10 h-11"
                                 {...register("password", {
                                     required: "Password is required",
                                     minLength: {
@@ -83,13 +95,7 @@ const Login = () => {
                                 })}
                             />
 
-                            {errors.password && (
-                                <p className="text-xs mt-2 text-red-600">
-                                    {errors.password.message}
-                                </p>
-                            )}
-
-
+        
                             <Button
                                 type="button"
                                 variant="ghost"
@@ -99,15 +105,22 @@ const Login = () => {
                             >
                                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                             </Button>
+                            
                         </div>
+                        {errors.password && (
+    <p className="text-xs mt-2 text-red-600">
+      {errors.password.message}
+    </p>
+  )}
                     </div>
 
                     {/* Login Button */}
                     <Button
                         type="submit"
-                        className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white text-base font-bold rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98] mt-2 focus:ring-2 focus:ring-blue-500/40"
+                        disabled={isSubmitting} // Industry Best Practice: Disable while loading
+                        className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl mt-2"
                     >
-                        Log In
+                        {isSubmitting ? "Logging in..." : "Log In"}
                     </Button>
                 </form>
 
