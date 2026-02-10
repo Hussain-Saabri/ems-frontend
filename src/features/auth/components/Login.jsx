@@ -1,15 +1,21 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const { register, handleSubmit, formState: { errors } } = useForm({
+        mode: "onSubmit",
+        reValidateMode: "onChange",
+    });
+    console.log("Login component rendered");
+
+    const onSubmit = (data) => {
         // Logic will be added when backend is ready
-        console.log('Logging in with:', { email, password });
+        console.log('Logging in with:', data);
     };
 
     return (
@@ -27,7 +33,7 @@ const Login = () => {
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     {/* Email Field */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="email">
@@ -37,15 +43,16 @@ const Login = () => {
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                                 <Mail size={18} />
                             </div>
-                            <input
+                            <Input
                                 id="email"
                                 type="email"
-                                required
-                                className="block w-full pl-10 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
                                 placeholder="name@example.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                className="pl-10 h-11"
+                                {...register("email", {
+                                    required: "Email is required",
+                                })}
                             />
+
                         </div>
                     </div>
 
@@ -63,32 +70,45 @@ const Login = () => {
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                                 <Lock size={18} />
                             </div>
-                            <input
-                                id="password"
-                                type={showPassword ? 'text' : 'password'}
-                                required
-                                className="block w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
+                            <Input
+                                type={showPassword ? "text" : "password"}
                                 placeholder="Enter your password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
+                                className="pl-10  h-11"
+                                {...register("password", {
+                                    required: "Password is required",
+                                    minLength: {
+                                        value: 6,
+                                        message: "Minimum 6 characters Required",
+                                    },
+                                })}
                             />
-                            <button
+
+                            {errors.password && (
+                                <p className="text-xs mt-2 text-red-600">
+                                    {errors.password.message}
+                                </p>
+                            )}
+
+
+                            <Button
                                 type="button"
-                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                                variant="ghost"
+                                size="sm"
+                                className="absolute inset-y-0 right-0 h-full px-3 text-gray-400 hover:text-gray-600 hover:bg-transparent transition-colors"
                                 onClick={() => setShowPassword(!showPassword)}
                             >
                                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                            </button>
+                            </Button>
                         </div>
                     </div>
 
                     {/* Login Button */}
-                    <button
+                    <Button
                         type="submit"
-                        className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98] mt-2 focus:ring-2 focus:ring-blue-500/40 outline-none"
+                        className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white text-base font-bold rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98] mt-2 focus:ring-2 focus:ring-blue-500/40"
                     >
                         Log In
-                    </button>
+                    </Button>
                 </form>
 
                 {/* Footer */}
@@ -101,7 +121,7 @@ const Login = () => {
                     </p>
                 </div>
 
-               
+
             </div>
         </div>
     );
