@@ -17,7 +17,7 @@ import {
 import apiClient from '@/api/apiClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
+import { EditEmployeeSkeleton } from './EditEmployeeSkeleton';
 
 const employeeSchema = z.object({
     fullName: z.string().min(2, "Name must be at least 2 characters"),
@@ -87,12 +87,7 @@ export default function EditEmployee() {
     };
 
     if (isLoading) {
-        return (
-            <div className="max-w-4xl mx-auto space-y-6">
-                <Skeleton className="h-10 w-48" />
-                <Skeleton className="h-[500px] w-full rounded-xl" />
-            </div>
-        );
+        return <EditEmployeeSkeleton />;
     }
 
     if (error || !employee) {
