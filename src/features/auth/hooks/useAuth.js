@@ -10,8 +10,8 @@ export const useAuth = () => {
     const isLoading = useAuthStore((state) => state.isLoading);
 
     return {
-        login: (data) => login(data, navigate),
-        googleLogin: (idToken) => googleLogin(idToken, navigate),
+        login: (data, customNavigate) => login(data, customNavigate !== undefined ? customNavigate : navigate),
+        googleLogin: (idToken, customNavigate) => googleLogin(idToken, customNavigate !== undefined ? customNavigate : navigate),
         logout: () => logout(navigate),
         isLoading,
     };

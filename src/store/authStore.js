@@ -34,7 +34,7 @@ const useAuthStore = create((set) => ({
             localStorage.setItem("user", JSON.stringify(user));
 
             toast.success("Login successful");
-            navigate("/employees");
+            if (navigate) navigate("/employees");
 
         } catch (err) {
             const errorMessage =
@@ -63,7 +63,7 @@ const useAuthStore = create((set) => ({
             localStorage.setItem("user", JSON.stringify(user));
 
             toast.success("Google Login successful");
-            navigate("/employees");
+            if (navigate) navigate("/employees");
         } catch (err) {
             const errorMessage = err.response?.data?.message || "Google Login failed";
             toast.error(errorMessage);

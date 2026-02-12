@@ -9,9 +9,14 @@ import { useAuth } from '../hooks/useAuth';
 import { Link } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { Logo } from '@/components/base/Logo';
+import LoginTransition from './LoginTransition';
+import { useNavigate } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 
 const LoginForm = () => {
+    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
+    const [showTransition, setShowTransition] = useState(false);
     const { login, googleLogin, isLoading } = useAuth();
 
     const {
@@ -32,8 +37,13 @@ const LoginForm = () => {
                 email_id: data.email,
                 password: data.password,
             };
-            await login(payload);
+            await login(payload, null); // Pass null to skip auto-navigation
+            setShowTransition(true);
+            setTimeout(() => {
+                navigate("/employees");
+            }, 3000);
         } catch (error) {
+            console.error("Login Error:", error);
         }
     };
 
@@ -77,9 +87,7 @@ const LoginForm = () => {
                         <label className="block text-sm font-medium text-gray-700" htmlFor="password">
                             Password
                         </label>
-                        <a href="#" className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">
-                            Forgot password?
-                        </a>
+
                     </div>
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
@@ -137,8 +145,16 @@ const LoginForm = () => {
 
                 <div className="w-full flex justify-center">
                     <GoogleLogin
-                        onSuccess={credentialResponse => {
-                            googleLogin(credentialResponse.credential);
+                        onSuccess={async (credentialResponse) => {
+                            try {
+                                await googleLogin(credentialResponse.credential, null);
+                                setShowTransition(true);
+                                setTimeout(() => {
+                                    navigate("/employees");
+                                }, 3000);
+                            } catch (error) {
+                                console.error("Google Login Error:", error);
+                            }
                         }}
                         onError={() => {
                             console.log('Google Login Failed');
@@ -151,6 +167,10 @@ const LoginForm = () => {
                     />
                 </div>
             </div>
+
+            <AnimatePresence>
+                {showTransition && <LoginTransition />}
+            </AnimatePresence>
 
             {/* Footer */}
             <div className="mt-6 text-center">
