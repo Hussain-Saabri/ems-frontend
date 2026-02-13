@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
@@ -16,6 +16,13 @@ import {
 import apiClient from '@/api/apiClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 const employeeSchema = z.object({
     fullName: z.string().min(2, "Name must be at least 2 characters"),
@@ -36,7 +43,8 @@ export default function AddEmployee() {
         handleSubmit,
         formState: { errors },
         watch,
-        setValue
+        setValue,
+        control
     } = useForm({
         resolver: zodResolver(employeeSchema),
         defaultValues: {
@@ -63,8 +71,8 @@ export default function AddEmployee() {
 
     return (
         <div className="space-y-6">
-            
-            
+
+
 
             {/* Form Card */}
             <div className="bg-white border border-gray-300 rounded-[12px] mb-15 overflow-hidden">
@@ -110,45 +118,61 @@ export default function AddEmployee() {
                         {/* Department */}
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-gray-700">Department</label>
-                            <select
-                                {...register("department")}
-                                className={`w-full h-11 px-3 rounded-md border text-sm outline-none transition-all focus:ring-2 appearance-none bg-no-repeat bg-[right_1rem_center] bg-[length:1em_1em]
-                                    ${errors.department
-                                        ? 'border-red-500 focus:ring-red-500/20'
-                                        : 'border-gray-200 focus:ring-blue-500/20'}`}
-                                style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")` }}
-                            >
-                                <option value="">Select Department</option>
-                                <option value="Engineering">Engineering</option>
-                                <option value="Design">Design</option>
-                                <option value="Marketing">Marketing</option>
-                                <option value="Sales">Sales</option>
-                                <option value="Support">Support</option>
-                                <option value="HR">HR</option>
-                            </select>
+                            <Controller
+                                name="department"
+                                control={control}
+                                render={({ field }) => (
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        value={field.value}
+                                    >
+                                        <SelectTrigger
+                                            className={`h-11 ${errors.department ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-200 focus:ring-blue-500/20'}`}
+                                        >
+                                            <SelectValue placeholder="Select Department" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Engineering">Engineering</SelectItem>
+                                            <SelectItem value="Design">Design</SelectItem>
+                                            <SelectItem value="Marketing">Marketing</SelectItem>
+                                            <SelectItem value="Sales">Sales</SelectItem>
+                                            <SelectItem value="Support">Support</SelectItem>
+                                            <SelectItem value="HR">HR</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                )}
+                            />
                             {errors.department && <p className="text-xs text-red-500">{errors.department.message}</p>}
                         </div>
 
                         {/* Role (Designation) */}
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-gray-700">Role</label>
-                            <select
-                                {...register("designation")}
-                                className={`w-full h-11 px-3 rounded-md border text-sm outline-none transition-all focus:ring-2 appearance-none bg-no-repeat bg-[right_1rem_center] bg-[length:1em_1em]
-                                    ${errors.designation
-                                        ? 'border-red-500 focus:ring-red-500/20'
-                                        : 'border-gray-200 focus:ring-blue-500/20'}`}
-                                style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")` }}
-                            >
-                                <option value="">Select Role</option>
-                                <option value="Frontend Developer">Frontend Developer</option>
-                                <option value="Backend Developer">Backend Developer</option>
-                                <option value="Fullstack Developer">Fullstack Developer</option>
-                                <option value="UI/UX Designer">UI/UX Designer</option>
-                                <option value="Product Manager">Product Manager</option>
-                                <option value="QA Engineer">QA Engineer</option>
-                                <option value="Support Engineer">Support Engineer</option>
-                            </select>
+                            <Controller
+                                name="designation"
+                                control={control}
+                                render={({ field }) => (
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        value={field.value}
+                                    >
+                                        <SelectTrigger
+                                            className={`h-11 ${errors.designation ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-200 focus:ring-blue-500/20'}`}
+                                        >
+                                            <SelectValue placeholder="Select Role" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Frontend Developer">Frontend Developer</SelectItem>
+                                            <SelectItem value="Backend Developer">Backend Developer</SelectItem>
+                                            <SelectItem value="Fullstack Developer">Fullstack Developer</SelectItem>
+                                            <SelectItem value="UI/UX Designer">UI/UX Designer</SelectItem>
+                                            <SelectItem value="Product Manager">Product Manager</SelectItem>
+                                            <SelectItem value="QA Engineer">QA Engineer</SelectItem>
+                                            <SelectItem value="Support Engineer">Support Engineer</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                )}
+                            />
                             {errors.designation && <p className="text-xs text-red-500">{errors.designation.message}</p>}
                         </div>
 
