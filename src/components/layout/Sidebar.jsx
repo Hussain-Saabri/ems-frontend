@@ -8,6 +8,7 @@ import {
     ArrowLeft01Icon,
     ArrowRight01Icon,
     Logout01Icon,
+    Cancel01Icon,
 } from "hugeicons-react";
 import {
     DropdownMenu,
@@ -69,7 +70,7 @@ export function Sidebar({ collapsed: initialCollapsed = false, onToggle, isOpen,
                     onClick={onClose}
                     className="md:hidden p-2 text-gray-500 hover:text-gray-900"
                 >
-                    <ArrowLeft01Icon size={20} />
+                    <Cancel01Icon size={20} />
                 </button>
             </div>
 
@@ -112,43 +113,50 @@ export function Sidebar({ collapsed: initialCollapsed = false, onToggle, isOpen,
                 </nav>
             </div>
 
-            {/* PROFILE BUTTON */}
-            <div className="p-4 border-t border-gray-100 mb-4">
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <button className={cn(
-                            "flex items-center gap-3 w-full p-2.5 rounded-xl transition-all duration-200",
-                            "bg-gray-100 border border-transparent hover:bg-gray-200",
-                            collapsed && "md:justify-center"
-                        )}>
-                            <div className="h-8 w-8 rounded-full bg-white flex items-center justify-center shrink-0 border border-gray-100 shadow-sm">
-                                <span className="text-[#00A3FF] font-bold text-sm">
-                                    {user?.name?.charAt(0).toUpperCase() || "U"}
-                                </span>
-                            </div>
-                            {(!collapsed || window.innerWidth < 768) && (
-                                <div className="flex flex-col items-start text-left overflow-hidden">
-                                    <span className="text-sm font-semibold text-gray-900 truncate w-full">
-                                        {user?.name || "User"}
-                                    </span>
-                                    <span className="text-[11px] text-[#00A3FF] truncate w-full font-medium">
-                                        {user?.email_id || "user@example.com"}
-                                    </span>
-                                </div>
-                            )}
-                        </button>
-                    </DropdownMenuTrigger>
+            {/* PROFILE SECTION */}
+            <div className={cn(
+                "mt-auto border-t border-gray-100 transition-all duration-300",
+                collapsed ? "p-2 mb-6" : "p-4 mb-10"
+            )}>
+                <div className={cn(
+                    "flex items-center gap-3 transition-all duration-300",
+                    collapsed ? "flex-col" : "bg-gray-50/50 p-2.5 rounded-2xl border border-gray-100"
+                )}>
+                    {/* Avatar - Only show when collapsed */}
+                    {collapsed && (
+                        <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center shrink-0 border border-gray-100 shadow-sm mx-auto">
+                            <span className="text-[#00A3FF] font-bold text-base">
+                                {user?.name?.charAt(0).toUpperCase() || "U"}
+                            </span>
+                        </div>
+                    )}
 
-                    <DropdownMenuContent align="end" className="w-[172px] p-1.5 rounded-xl border-gray-200 bg-white shadow-lg">
-                        <DropdownMenuItem
-                            onClick={handleLogout}
-                            className="rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 py-2 cursor-pointer"
-                        >
-                            <Logout01Icon className="mr-2 h-4 w-4" />
-                            Logout
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                    {/* User Info - Show when expanded */}
+                    {!collapsed && (
+                        <div className="flex-1 min-w-0 ml-1">
+                            <p className="text-sm font-semibold text-gray-900 truncate">
+                                {user?.name || "User"}
+                            </p>
+                            <p className="text-[11px] text-[#00A3FF] truncate font-medium">
+                                {user?.email_id || "user@example.com"}
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Logout Button */}
+                    <button
+                        onClick={handleLogout}
+                        className={cn(
+                            "flex items-center justify-center transition-all duration-200 shrink-0",
+                            collapsed
+                                ? "h-9 w-9 mt-2 rounded-xl text-gray-400 hover:text-red-600 hover:bg-red-50"
+                                : "h-9 w-9 rounded-xl text-gray-400 hover:text-red-600 hover:bg-white shadow-sm border border-transparent hover:border-red-100"
+                        )}
+                        title="Logout"
+                    >
+                        <Logout01Icon size={18} />
+                    </button>
+                </div>
             </div>
         </aside>
     );
