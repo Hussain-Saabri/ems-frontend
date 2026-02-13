@@ -42,11 +42,7 @@ export const useDeleteEmployee = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: EMPLOYEE_QUERY_KEYS.all });
             toast.error("Employee deleted successfully", {
-                style: {
-                    background: "#fee2e2",
-                    color: "#991b1b",
-                    border: "1px solid #fecaca"
-                }
+                
             });
         },
         onError: (error) => {
