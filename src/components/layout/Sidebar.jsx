@@ -24,6 +24,12 @@ import { Logo } from "@/components/base/Logo";
 import useAuthStore from "@/store/authStore";
 
 
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 export function Sidebar({ collapsed: initialCollapsed = false, onToggle, isOpen, onClose }) {
     const [collapsed, setCollapsed] = useState(initialCollapsed);
     const navigate = useNavigate();
@@ -143,19 +149,25 @@ export function Sidebar({ collapsed: initialCollapsed = false, onToggle, isOpen,
                         </div>
                     )}
 
-                    {/* Logout Button */}
-                    <button
-                        onClick={handleLogout}
-                        className={cn(
-                            "flex items-center justify-center transition-all duration-200 shrink-0",
-                            collapsed
-                                ? "h-9 w-9 mt-2 rounded-xl text-gray-400 hover:text-red-600 hover:bg-red-50"
-                                : "h-9 w-9 rounded-xl text-gray-400 hover:text-red-600 hover:bg-white shadow-sm border border-transparent hover:border-red-100"
-                        )}
-                        title="Logout"
-                    >
-                        <Logout01Icon size={18} />
-                    </button>
+                    {/* Logout Button with Tooltip */}
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <button
+                                onClick={handleLogout}
+                                className={cn(
+                                    "flex items-center justify-center transition-all duration-200 shrink-0",
+                                    collapsed
+                                        ? "h-9 w-9 mt-2 rounded-xl text-gray-400 hover:text-red-600 hover:bg-red-50"
+                                        : "h-9 w-9 rounded-xl text-gray-400 hover:text-red-600 hover:bg-white shadow-sm border border-transparent hover:border-red-100"
+                                )}
+                            >
+                                <Logout01Icon size={18} />
+                            </button>
+                        </TooltipTrigger>
+                        <TooltipContent side={collapsed ? "right" : "top"} sideOffset={10}>
+                            <p>Logout</p>
+                        </TooltipContent>
+                    </Tooltip>
                 </div>
             </div>
         </aside>

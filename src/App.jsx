@@ -6,13 +6,17 @@ import Login from './features/auth/pages/Login'
 import Signup from './features/auth/pages/Signup'
 import { MainLayout } from './components/layout/MainLayout';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
-import AddEmployee from './features/AddEmployye/page';
-import Employees from './features/Employees/page';
-import Profile from './features/Employees/Profile';
-import EditEmployee from './features/EditEmployee/page';
+import {
+  EmployeesPage,
+  AddEmployeePage,
+  EditEmployeePage,
+  EmployeeProfilePage
+} from './features/employees';
+import { TooltipProvider } from '@/components/ui/tooltip';
+
 function App() {
   return (
-    <>
+    <TooltipProvider>
       <Toaster
         position="top-right"
         toastOptions={{
@@ -49,13 +53,13 @@ function App() {
             <MainLayout />
           </ProtectedRoute>
         }>
-          <Route path="/employees" element={<Employees />} />
-          <Route path="/employees/:id" element={<Profile />} />
-          <Route path="/employees/edit/:id" element={<EditEmployee />} />
-          <Route path="/employees/add" element={<AddEmployee />} />
+          <Route path="/employees" element={<EmployeesPage />} />
+          <Route path="/employees/:id" element={<EmployeeProfilePage />} />
+          <Route path="/employees/edit/:id" element={<EditEmployeePage />} />
+          <Route path="/employees/add" element={<AddEmployeePage />} />
         </Route>
       </Routes>
-    </>
+    </TooltipProvider>
   )
 }
 

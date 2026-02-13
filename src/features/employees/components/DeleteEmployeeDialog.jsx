@@ -7,7 +7,7 @@ import {
 } from 'hugeicons-react';
 import { Button } from '@/components/ui/button';
 
-export default function DeleteConfirmationDialog({
+export default function DeleteEmployeeDialog({
     isOpen,
     onClose,
     onConfirm,

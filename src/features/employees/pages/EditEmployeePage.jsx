@@ -1,20 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { toast } from 'sonner';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-    ArrowLeft01Icon,
-    UserIcon,
-    Mail01Icon,
-    CallIcon,
-    Briefcase01Icon,
-    Building01Icon,
-    Calendar01Icon
-} from 'hugeicons-react';
-import apiClient from '@/api/apiClient';
+import { ArrowLeft01Icon } from 'hugeicons-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -24,7 +13,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { EditEmployeeSkeleton } from './EditEmployeeSkeleton';
+import { EditEmployeeSkeleton } from '../components/EditEmployeeSkeleton';
+import { useEmployee, useUpdateEmployee } from '../hooks/useEmployees';
 
 const employeeSchema = z.object({
     fullName: z.string().min(2, "Name must be at least 2 characters"),
@@ -36,26 +26,17 @@ const employeeSchema = z.object({
     status: z.enum(["Active", "Inactive"]),
 });
 
-export default function EditEmployee() {
+const EditEmployeePage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const queryClient = useQueryClient();
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
-    const { data: employee, isLoading, error } = useQuery({
-        queryKey: ['employee', id],
-        queryFn: async () => {
-            const response = await apiClient.get(`/employees/${id}`);
-            return response.data.data;
-        },
-    });
+    const { data: employee, isLoading, error } = useEmployee(id);
+    const updateMutation = useUpdateEmployee();
 
     const {
         register,
         handleSubmit,
         formState: { errors },
         watch,
-        setValue,
         reset,
         control
     } = useForm({
@@ -88,20 +69,11 @@ export default function EditEmployee() {
     const currentStatus = watch("status");
 
     const onSubmit = async (data) => {
-        setIsSubmitting(true);
         try {
-            await apiClient.put(`/employees/${id}`, data);
-            toast.success('Employee updated successfully! 🎉');
-
-            // Invalidate and refetch
-            queryClient.invalidateQueries({ queryKey: ['employees'] });
-
+            await updateMutation.mutateAsync({ id, data });
             navigate('/employees');
         } catch (error) {
             console.error('Error updating employee:', error);
-            toast.error(error.response?.data?.message || 'Failed to update employee. Please try again.');
-        } finally {
-            setIsSubmitting(false);
         }
     };
 
@@ -125,7 +97,6 @@ export default function EditEmployee() {
 
     return (
         <div className="max-w-4xl mx-auto space-y-6">
-            {/* Header Section */}
             <div className="flex items-center gap-4">
                 <Button
                     variant="outline"
@@ -141,12 +112,9 @@ export default function EditEmployee() {
                 </div>
             </div>
 
-            {/* Form Card */}
             <div className="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden">
                 <form onSubmit={handleSubmit(onSubmit)} className="p-8 space-y-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-
-                        {/* Full Name */}
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-gray-700">Full Name</label>
                             <Input
@@ -157,7 +125,6 @@ export default function EditEmployee() {
                             {errors.fullName && <p className="text-xs text-red-500">{errors.fullName.message}</p>}
                         </div>
 
-                        {/* Email Address */}
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-gray-700">Email Address</label>
                             <Input
@@ -169,7 +136,6 @@ export default function EditEmployee() {
                             {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
                         </div>
 
-                        {/* Phone Number */}
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-gray-700">Phone Number</label>
                             <Input
@@ -180,7 +146,6 @@ export default function EditEmployee() {
                             {errors.phoneNumber && <p className="text-xs text-red-500">{errors.phoneNumber.message}</p>}
                         </div>
 
-                        {/* Department */}
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-gray-700">Department</label>
                             <Controller
@@ -211,7 +176,6 @@ export default function EditEmployee() {
                             {errors.department && <p className="text-xs text-red-500">{errors.department.message}</p>}
                         </div>
 
-                        {/* Role (Designation) */}
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-gray-700">Role</label>
                             <Controller
@@ -243,7 +207,6 @@ export default function EditEmployee() {
                             {errors.designation && <p className="text-xs text-red-500">{errors.designation.message}</p>}
                         </div>
 
-                        {/* Date of Joining */}
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-gray-700">Date of Joining</label>
                             <Input
@@ -254,7 +217,6 @@ export default function EditEmployee() {
                             {errors.dateOfJoining && <p className="text-xs text-red-500">{errors.dateOfJoining.message}</p>}
                         </div>
 
-                        {/* Status */}
                         <div className="space-y-3">
                             <label className="text-sm font-semibold text-gray-700 block">Status</label>
                             <div className="flex items-center gap-6 h-11">
@@ -291,7 +253,6 @@ export default function EditEmployee() {
                         </div>
                     </div>
 
-                    {/* Form Actions */}
                     <div className="flex items-center justify-end gap-3 pt-6 border-t border-gray-100">
                         <Button
                             type="button"
@@ -303,14 +264,16 @@ export default function EditEmployee() {
                         </Button>
                         <Button
                             type="submit"
-                            disabled={isSubmitting}
+                            disabled={updateMutation.isLoading}
                             className="h-11 px-8 bg-blue-600 hover:bg-blue-700 text-white shadow-sm shadow-blue-200 disabled:opacity-70 transition-all font-semibold"
                         >
-                            {isSubmitting ? 'Saving...' : 'Save Changes'}
+                            {updateMutation.isLoading ? 'Saving...' : 'Save Changes'}
                         </Button>
                     </div>
                 </form>
             </div>
         </div>
     );
-}
+};
+
+export default EditEmployeePage;
