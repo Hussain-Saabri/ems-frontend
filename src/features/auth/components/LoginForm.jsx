@@ -48,125 +48,130 @@ const LoginForm = () => {
     };
 
     return (
-        <div className="w-full max-w-md border border-gray-300 bg-white rounded-2xl p-6 transition-all duration-300">
-            {/* Header */}
-            <div className="flex flex-col items-center mb-0">
-                <Logo width={40} height={40} showText={false} className="mb-1" />
-                <h1 className="text-xl font-bold text-gray-900 mb-1">Login</h1>
-            </div>
-
-            {/* Form */}
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                {/* Email Field */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="email">
-                        Email address
-                    </label>
-                    <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                            <Mail size={18} />
-                        </div>
-                        <Input
-                            id="email"
-                            type="email"
-                            placeholder="name@example.com"
-                            className="pl-10 h-11"
-                            {...register("email")}
-                        />
+        <>
+            {!showTransition && (
+                <div className="w-full max-w-md border border-gray-300 bg-white rounded-2xl p-6 transition-all duration-300">
+                    {/* Header */}
+                    <div className="flex flex-col items-center mb-0">
+                        <Logo width={40} height={40} showText={false} className="mb-1" />
+                        <h1 className="text-xl font-bold text-gray-900 mb-1">Login</h1>
                     </div>
-                    {errors.email && (
-                        <p className="text-red-500 text-xs mt-1">
-                            {errors.email.message}
-                        </p>
-                    )}
-                </div>
 
-                {/* Password Field */}
-                <div>
-                    <div className="flex items-center justify-between mb-1.5">
-                        <label className="block text-sm font-medium text-gray-700" htmlFor="password">
-                            Password
-                        </label>
-
-                    </div>
-                    <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                            <Lock size={18} />
+                    {/* Form */}
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                        {/* Email Field */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="email">
+                                Email address
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                    <Mail size={18} />
+                                </div>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="name@example.com"
+                                    className="pl-10 h-11"
+                                    {...register("email")}
+                                />
+                            </div>
+                            {errors.email && (
+                                <p className="text-red-500 text-xs mt-1">
+                                    {errors.email.message}
+                                </p>
+                            )}
                         </div>
-                        <Input
-                            type={showPassword ? "text" : "password"}
-                            placeholder="Enter your password"
-                            className="pl-10 h-11"
-                            {...register("password")}
-                        />
+
+                        {/* Password Field */}
+                        <div>
+                            <div className="flex items-center justify-between mb-1.5">
+                                <label className="block text-sm font-medium text-gray-700" htmlFor="password">
+                                    Password
+                                </label>
+
+                            </div>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                    <Lock size={18} />
+                                </div>
+                                <Input
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Enter your password"
+                                    className="pl-10 h-11"
+                                    {...register("password")}
+                                />
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    className="absolute inset-y-0 right-0 h-full px-3 text-gray-400 hover:text-gray-600 hover:bg-transparent transition-colors"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </Button>
+                            </div>
+                            {errors.password && (
+                                <p className="text-xs mt-1 text-red-600">
+                                    {errors.password.message}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Login Button */}
                         <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="absolute inset-y-0 right-0 h-full px-3 text-gray-400 hover:text-gray-600 hover:bg-transparent transition-colors"
-                            onClick={() => setShowPassword(!showPassword)}
+                            type="submit"
+                            disabled={isEmailLoading}
+                            className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl mt-2 flex items-center justify-center gap-2"
                         >
-                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            {isEmailLoading ? (
+                                <>
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                    Logging in...
+                                </>
+                            ) : (
+                                "Log In"
+                            )}
                         </Button>
+                    </form>
+
+                    <div className="mt-4 flex flex-col items-center gap-4">
+                        <div className="relative w-full text-center">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-gray-200"></div>
+                            </div>
+                            <span className="relative px-3 bg-white text-xs font-medium text-gray-400 uppercase tracking-widest">
+                                Or continue with
+                            </span>
+                        </div>
+
+                        <div className="w-full flex justify-center">
+                            <GoogleLogin
+                                onSuccess={async (credentialResponse) => {
+                                    try {
+                                        setShowTransition(true);
+                                        await googleLogin(credentialResponse.credential, null);
+
+                                        setTimeout(() => {
+                                            navigate("/employees");
+                                        }, 3000);
+                                    } catch (error) {
+                                        console.error("Google Login Error:", error);
+                                    }
+                                }}
+                                onError={() => {
+                                    console.log('Google Login Failed');
+                                }}
+                                useOneTap
+                                theme="filled_blue"
+                                shape="pill"
+                                size="large"
+                                width="100%"
+                            />
+                        </div>
                     </div>
-                    {errors.password && (
-                        <p className="text-xs mt-1 text-red-600">
-                            {errors.password.message}
-                        </p>
-                    )}
                 </div>
-
-                {/* Login Button */}
-                <Button
-                    type="submit"
-                    disabled={isEmailLoading}
-                    className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl mt-2 flex items-center justify-center gap-2"
-                >
-                    {isEmailLoading ? (
-                        <>
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            Logging in...
-                        </>
-                    ) : (
-                        "Log In"
-                    )}
-                </Button>
-            </form>
-
-            <div className="mt-4 flex flex-col items-center gap-4">
-                <div className="relative w-full text-center">
-                    <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-200"></div>
-                    </div>
-                    <span className="relative px-3 bg-white text-xs font-medium text-gray-400 uppercase tracking-widest">
-                        Or continue with
-                    </span>
-                </div>
-
-                <div className="w-full flex justify-center">
-                    <GoogleLogin
-                        onSuccess={async (credentialResponse) => {
-                            try {
-                                await googleLogin(credentialResponse.credential, null);
-                                setShowTransition(true);
-                                setTimeout(() => {
-                                    navigate("/employees");
-                                }, 3000);
-                            } catch (error) {
-                                console.error("Google Login Error:", error);
-                            }
-                        }}
-                        onError={() => {
-                            console.log('Google Login Failed');
-                        }}
-                        useOneTap
-                        theme="filled_blue"
-                        shape="pill"
-                        size="large"
-                        width="100%"
-                    />
-                </div>
-            </div>
+            )}
 
             <AnimatePresence>
                 {showTransition && <LoginTransition />}
@@ -176,7 +181,7 @@ const LoginForm = () => {
             <div className="mt-6 text-center">
 
             </div>
-        </div>
+        </>
     );
 };
 
