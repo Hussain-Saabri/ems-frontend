@@ -41,7 +41,7 @@ const useAuthStore = create((set) => ({
             const errorMessage =
                 err.response?.data?.message || "Login failed";
 
-            toast.error(errorMessage);
+            // toast.error(errorMessage); // Removed to prevent duplicate toasts (LoginForm handles it)
             set({ isEmailLoading: false });
             throw err;
         }
@@ -63,28 +63,33 @@ const useAuthStore = create((set) => ({
             localStorage.setItem("token", token);
             localStorage.setItem("user", JSON.stringify(user));
 
-            
+
             if (navigate) navigate("/employees");
         } catch (err) {
             const errorMessage = err.response?.data?.message || "Google Login failed";
-            toast.error(errorMessage);
+            // toast.error(errorMessage); // Removed to prevent duplicate toasts (LoginForm handles it)
             set({ isGoogleLoading: false });
             throw err;
         }
     },
 
-    logout: (navigate) => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
+    logout: async (navigate) => {
+        try {
+            await authService.logout();
+        } catch (error) {
+            console.error("Logout error:", error);
+        } finally {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
 
-        set({
-            user: null,
-            token: null,
-            isAuthenticated: false,
-        });
+            set({
+                user: null,
+                token: null,
+                isAuthenticated: false,
+            });
 
-        
-        navigate("/");
+            if (navigate) navigate("/login");
+        }
     },
 }));
 

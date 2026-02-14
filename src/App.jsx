@@ -10,11 +10,16 @@ import {
   EditEmployeePage,
   EmployeeProfilePage
 } from './features/employees';
+import React, { Suspense } from 'react';
+// Conditional import for Audit feature
+const LoginActivity = import.meta.env.VITE_ENABLE_AUDIT === 'true'
+  ? React.lazy(() => import('./features/audit/pages/LoginActivity'))
+  : null;
 import { TooltipProvider } from '@/components/ui/tooltip';
 
 
 function App() {
-  
+
   return (
     <TooltipProvider>
       <Toaster
@@ -56,6 +61,16 @@ function App() {
           <Route path="/employees/:id" element={<EmployeeProfilePage />} />
           <Route path="/employees/edit/:id" element={<EditEmployeePage />} />
           <Route path="/employees/add" element={<AddEmployeePage />} />
+          {import.meta.env.VITE_ENABLE_AUDIT === 'true' && (
+            <Route
+              path="/admin/login-activity"
+              element={
+                <Suspense fallback={<div>Loading...</div>}>
+                  <LoginActivity />
+                </Suspense>
+              }
+            />
+          )}
         </Route>
       </Routes>
     </TooltipProvider>

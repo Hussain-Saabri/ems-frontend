@@ -51,6 +51,10 @@ export function Sidebar({ collapsed: initialCollapsed = false, onToggle, isOpen,
         { label: "Add Employee", href: "/employees/add", icon: "add-employee" },
     ];
 
+    if (import.meta.env.VITE_ENABLE_AUDIT === 'true') {
+        navItems.push({ label: "Audit Logs", href: "/admin/login-activity", icon: "audit" });
+    }
+
     return (
         <aside
             className={cn(

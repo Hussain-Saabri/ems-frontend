@@ -17,6 +17,7 @@ const EmployeesTable = ({ table, isLoading, error }) => {
 
     return (
         <div className="bg-white border rounded-lg overflow-hidden">
+            <EmployeesPagination table={table} position="top" />
             <div className="overflow-x-auto">
                 <Table>
                     <TableHeader className="bg-gray-50/50">
@@ -99,8 +100,7 @@ const EmployeesTable = ({ table, isLoading, error }) => {
                     </TableBody>
                 </Table>
             </div>
-
-            <EmployeesPagination table={table} />
+            <EmployeesPagination table={table} position="bottom" />
         </div>
     );
 };

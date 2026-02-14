@@ -4,7 +4,7 @@ import { Search01Icon, PlusSignIcon } from 'hugeicons-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
-const EmployeesToolbar = ({ filterValue, onFilterChange }) => {
+const EmployeesToolbar = ({ filterValue, onFilterChange, totalResults }) => {
     return (
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="relative w-full sm:w-72">
@@ -17,12 +17,12 @@ const EmployeesToolbar = ({ filterValue, onFilterChange }) => {
                 />
             </div>
 
-            <Link to="/employees/add">
-                <Button className="bg-[#2563EB] hover:bg-[#00A4FF] text-white gap-2 h-10 px-4">
-                    <PlusSignIcon className="h-5 w-5" />
-                    Add Employee
-                </Button>
-            </Link>
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-full text-sm">
+                <span className="font-bold text-[#2563EB]">{totalResults}</span>
+                <span className="text-gray-500 font-medium">
+                    {`result${totalResults !== 1 ? 's' : ''} found`}
+                </span>
+            </div>
         </div>
     );
 };

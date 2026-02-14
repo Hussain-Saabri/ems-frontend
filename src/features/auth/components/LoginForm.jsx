@@ -6,12 +6,12 @@ import { useForm } from "react-hook-form";
 import { loginSchema } from '../schemas/authSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '../hooks/useAuth';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { Logo } from '@/components/base/Logo';
 import LoginTransition from './LoginTransition';
-import { useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
 
 const LoginForm = () => {
     const navigate = useNavigate();
@@ -22,6 +22,7 @@ const LoginForm = () => {
     const {
         register,
         handleSubmit,
+        reset,
         formState: { errors },
     } = useForm({
         resolver: zodResolver(loginSchema),
@@ -43,7 +44,13 @@ const LoginForm = () => {
                 navigate("/employees");
             }, 3000);
         } catch (error) {
+            console.log("error", error);
             console.error("Login Error:", error);
+            const errorMessage = error.response?.data?.message || error.message || "Login failed";
+            toast.error(errorMessage, {
+                duration: 3000,
+            });
+            reset();
         }
     };
 
@@ -153,13 +160,14 @@ const LoginForm = () => {
                                     navigate("/employees");
                                 }, 3000);
                             } catch (error) {
+                                console.log("error", error);
                                 console.error("Google Login Error:", error);
                             }
                         }}
                         onError={() => {
                             console.log('Google Login Failed');
                         }}
-                        useOneTap
+                        useOneTap={false}
                         theme="filled_blue"
                         shape="pill"
                         size="large"

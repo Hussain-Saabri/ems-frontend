@@ -27,5 +27,5 @@ dist-ssr
 .env
 .env.development
 .env.production
-.env.local
-.env.*.local
+# Audit Feature (Private)
+src/features/audit/

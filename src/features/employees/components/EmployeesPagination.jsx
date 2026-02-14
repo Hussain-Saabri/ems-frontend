@@ -1,22 +1,25 @@
 import React from 'react';
 import { ArrowLeft01Icon, ArrowRight01Icon } from 'hugeicons-react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
-const EmployeesPagination = ({ table }) => {
+const EmployeesPagination = ({ table, position = 'bottom' }) => {
     const rowCount = table.getFilteredRowModel().rows.length;
 
     if (rowCount <= 5 && table.getPageCount() <= 1) return null;
 
     return (
-        <div className="flex flex-col sm:flex-row items-center justify-between px-4 py-4 border-t text-sm text-gray-500 gap-4">
-            <div className="font-medium text-gray-500">
-                <span className="text-gray-900 font-semibold">{rowCount}</span>
-                {` result${rowCount !== 1 ? 's' : ''} found`}
-            </div>
+        <div className={cn(
+            "flex flex-col sm:flex-row items-center justify-end px-4 py-4 text-sm text-gray-500 gap-4",
+            position === 'top' ? 'border-b hidden sm:flex' : 'border-t flex'
+        )}>
 
-            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-gray-500">
-                {rowCount > 5 && (
-                    <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-gray-500 w-full sm:w-auto justify-center sm:justify-end">
+                {((position === 'top' && rowCount > 5) || (position === 'bottom' && rowCount > 5)) && (
+                    <div className={cn(
+                        "items-center gap-2",
+                        position === 'top' ? "flex" : "flex sm:hidden"
+                    )}>
                         Rows per page:
                         <select
                             value={table.getState().pagination.pageSize}

@@ -21,11 +21,14 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Import the store dynamically or use it directly if it's already set up
-      // Clear token and redirect via a global auth state if possible
+      // Clear token and user info
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      window.location.href = '/login';
+
+      // Only redirect if not already on the login page to avoid reload loops
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

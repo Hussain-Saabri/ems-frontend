@@ -62,6 +62,7 @@ const EmployeesPage = () => {
             <EmployeesToolbar
                 filterValue={globalFilter}
                 onFilterChange={setGlobalFilter}
+                totalResults={table.getFilteredRowModel().rows.length}
             />
 
             <EmployeesTable

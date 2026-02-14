@@ -4,5 +4,6 @@ import apiClient from '../../../api/apiClient';
 export const authService = {
   login: (data) => apiClient.post("/users/login", data),
   googleLogin: (data) => apiClient.post("/users/google-login", data),
+  logout: () => apiClient.post("/users/logout"),
   register: (data) => apiClient.post("/auth/users/register", data),
 };
