@@ -57,7 +57,6 @@ const LoginForm = () => {
 
 
     return (
-    return (
         <>
             <div className={`w-full max-w-md border border-gray-300 bg-white rounded-2xl p-6 transition-all duration-300 ${showTransition ? 'invisible opacity-0' : 'opacity-100'}`}>
                 {/* Header */}
