@@ -37,11 +37,11 @@ const LoginForm = () => {
                 email_id: data.email,
                 password: data.password,
             };
-            await login(payload, null); // Pass null to skip auto-navigation
-            // Step 1: Stay on login page for 1s after success
+            await login(payload, null); 
+            
             setTimeout(() => {
                 setShowTransition(true);
-            }, 1000);
+            }, 500);
         } catch (error) {
             console.error("Login Error:", error);
             setShowTransition(false);
@@ -145,16 +145,16 @@ const LoginForm = () => {
                             </span>
                         </div>
 
-                        {/* Stable height container for Google Login */}
+                    
                         <div className="w-full flex justify-center min-h-[44px]">
                             <GoogleLogin
                                 onSuccess={async (credentialResponse) => {
                                     try {
                                         await googleLogin(credentialResponse.credential, null);
-                                        // Step 1: Stay on login page for 1s after success
+                                       
                                         setTimeout(() => {
                                             setShowTransition(true);
-                                        }, 1000);
+                                        }, 2000);
                                     } catch (error) {
                                         console.error("Google Login Error:", error);
                                         setShowTransition(false);
