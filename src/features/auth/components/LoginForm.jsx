@@ -156,7 +156,7 @@ const LoginForm = () => {
                     <div className="w-full flex justify-center">
                         <GoogleLogin
                             onSuccess={async (credentialResponse) => {
-                                // Show transition immediately to prevent flicker/delay
+                                // Show transition immediately
                                 setShowTransition(true);
                                 try {
                                     await googleLogin(credentialResponse.credential, null);
@@ -166,6 +166,10 @@ const LoginForm = () => {
                                 } catch (error) {
                                     console.log("error", error);
                                     console.error("Google Login Error:", error);
+                                    toast.error("Google Login Failed", {
+                                        description: "Please try again or use email login.",
+                                        duration: 4000,
+                                    });
                                     // Hide transition if login fails so user can retry
                                     setShowTransition(false);
                                 }
